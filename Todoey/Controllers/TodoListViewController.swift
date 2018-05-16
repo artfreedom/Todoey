@@ -11,6 +11,7 @@ import RealmSwift
 
 class TodoListViewController: UITableViewController {
     
+    
     var todoItems: Results<Item>?
     let realm = try! Realm()
     
@@ -66,8 +67,8 @@ class TodoListViewController: UITableViewController {
         
         if let item = todoItems?[indexPath.row] {
             do {
-            try realm.write {
-                item.done = !item.done
+                try realm.write {
+                    item.done = !item.done
                 }
             } catch {
                 print("Error Saving Done Status, \(error)")
@@ -75,8 +76,6 @@ class TodoListViewController: UITableViewController {
         }
         
         tableView.reloadData()
-        
-
         
         
         tableView.deselectRow(at: indexPath, animated: true)
@@ -101,7 +100,10 @@ class TodoListViewController: UITableViewController {
                     let newItem = Item()
                     newItem.title = textField.text!
                     
+                    newItem.dateCreated = Date()
+                    
                     currentCategory.items.append(newItem)
+                    
                         }
                     } catch {
                         print("Error Save New Item, \(error)")
@@ -126,16 +128,7 @@ class TodoListViewController: UITableViewController {
     //MARK: - Model Manipulation Methods
     
     //TODO: - Save items here:
-    
-//    func saveItems() {
-//        do {
-//            try context.save()
-//        } catch {
-//           print("Error saving context, \(error)")
-//        }
-//        
-//        self.tableView.reloadData()
-//    }
+
     
     //TODO: - Load items here:
     
@@ -143,7 +136,8 @@ class TodoListViewController: UITableViewController {
         
         todoItems = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
 
-        self.tableView.reloadData()
+        tableView.reloadData()
+        
     }
     
     
@@ -155,7 +149,9 @@ extension TodoListViewController: UISearchBarDelegate {
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         
-        todoItems = todoItems?.filter("title CONTAINS[cd] %@", searchBar.text!).sorted(byKeyPath: "title", ascending: true)
+        todoItems = todoItems?.filter("title CONTAINS[cd] %@", searchBar.text!).sorted(byKeyPath: "dateCreated", ascending: true)
+        
+        tableView.reloadData()
         
     }
 
